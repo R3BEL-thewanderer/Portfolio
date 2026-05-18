@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, lazy, Suspense } from "react";
 import { motion, useScroll, useTransform, MotionValue, AnimatePresence } from "framer-motion";
 import { Github, Linkedin, Mail } from "lucide-react";
 import Hls from "hls.js";
+import emailjs from "@emailjs/browser";
 
 // Lazy load Three.js galaxy to reduce initial bundle & unblock main thread
 const GalaxyCanvas = lazy(() => import("./components/GalaxyCanvas"));
@@ -124,11 +125,11 @@ const HeroSection = () => (
         </div>
       </motion.div>
 
-      <motion.h1 {...fadeUp(0.1)} className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-[-1.5px] md:tracking-[-3px] mb-4 md:mb-6">
+      <motion.h1 {...fadeUp(0.1)} className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight md:tracking-[-3px] mb-4 md:mb-6">
         Building <span className="font-serif italic font-normal pr-1 md:pr-2">Scalable</span> Systems
       </motion.h1>
 
-      <motion.p {...fadeUp(0.2)} className="text-sm md:text-lg font-heading font-light max-w-2xl mx-auto mb-8 md:mb-10 leading-relaxed px-2" style={{ color: "hsl(var(--hero-subtitle))" }}>
+      <motion.p {...fadeUp(0.2)} className="text-base sm:text-lg md:text-xl font-heading font-light max-w-2xl mx-auto mb-8 md:mb-10 leading-relaxed px-1 sm:px-0" style={{ color: "hsl(var(--hero-subtitle))" }}>
         B.E in Information Technology student at TCET, Mumbai — crafting intelligent web apps, AI-powered tools, and solutions that actually matter.
       </motion.p>
 
@@ -140,7 +141,7 @@ const HeroSection = () => (
         <input
           type="email"
           placeholder="Enter your email to connect"
-          className="flex-1 bg-transparent border-none outline-none px-4 md:px-6 py-2 md:py-0 text-foreground placeholder:text-muted-foreground font-medium text-sm md:text-base"
+          className="flex-1 bg-transparent border-none outline-none px-4 md:px-6 py-3 md:py-0 text-foreground placeholder:text-muted-foreground font-medium text-sm sm:text-base"
           required
         />
         <motion.button
@@ -473,11 +474,24 @@ const CTASection = () => {
     e.preventDefault();
     const form = e.currentTarget;
     setBtnText("Sending...");
-    setTimeout(() => {
-      setBtnText("Sent Successfully! ✅");
-      form.reset();
-      setTimeout(() => setBtnText("Send Message"), 4000);
-    }, 1200);
+    
+    // IMPORTANT: Replace these with your actual EmailJS credentials
+    // You cannot pass your destination email here directly. You must configure
+    // ashishhsingh4444@gmail.com as the destination in the EmailJS dashboard.
+    const serviceId = "YOUR_SERVICE_ID";
+    const templateId = "YOUR_TEMPLATE_ID";
+    const publicKey = "YOUR_PUBLIC_KEY";
+
+    emailjs.sendForm(serviceId, templateId, form, publicKey)
+      .then(() => {
+          setBtnText("Sent Successfully! ✅");
+          form.reset();
+          setTimeout(() => setBtnText("Send Message"), 4000);
+      }, (error) => {
+          console.error(error.text);
+          setBtnText("Error Sending ❌");
+          setTimeout(() => setBtnText("Send Message"), 4000);
+      });
   };
 
   return (
